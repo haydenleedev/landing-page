@@ -65,16 +65,32 @@ createNav(...sections);
 
 // Add class 'active' to section when near top of viewport
 
+const isScrolledIntoView = (element) => {
+    let bounding = element.getBoundingClientRect();
+    return (
+      bounding.top >= 0 &&
+      bounding.left >= 0 &&
+      bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  };
+
+  
+
 function addActiveOnScroll(...sections){
-    window.addEventListener("scroll", function(){
+    window.addEventListener("scroll", activeScrollCallback);
+    window.addEventListener("touchmove", activeScrollCallback);  // For mobile devices
+
+    function activeScrollCallback(){
         for ( let section of sections ) {
             const sectionId = section.getAttribute("id");
             let bounding = section.getBoundingClientRect();
             const targetMenu = document.querySelector(".menu__link[href='#" + sectionId + "']");
             mainNavContainer.style.display = "none";
 
-            if (bounding.top >= 0 &&
-                bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)) 
+           // const viewPort = (bounding.top >= 0 && bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+
+            if (isScrolledIntoView(section)) 
             {
                 addActiveClass(section); // add active class to active section when scrolled
                 addActiveClass(targetMenu); // add active class to active nav when scrolled
@@ -85,7 +101,7 @@ function addActiveOnScroll(...sections){
 
             mainNavContainer.style.display = "block";
         }
-    });
+    }
 }
 addActiveOnScroll(...sections);
 
