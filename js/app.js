@@ -46,9 +46,6 @@ function removeActiveClass(targets) {
 */
 
 // build the nav
-
-
-//document.addEventListener("DOMContentLoaded", function() {
     
 function createNav(...sections) {
     let i = 1;
@@ -64,8 +61,6 @@ function createNav(...sections) {
     mainNavContainer.appendChild(fragment);
 }
 createNav(...sections);
-    
-//});
 
 
 // Add class 'active' to section when near top of viewport
@@ -75,15 +70,17 @@ function addActiveOnScroll(...sections){
         for ( let section of sections ) {
             const sectionId = section.getAttribute("id");
             let bounding = section.getBoundingClientRect();
-
+            const targetMenu = document.querySelector(".menu__link[href='#" + sectionId + "']");
             mainNavContainer.style.display = "none";
 
             if (bounding.top >= 0 &&
                 bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)) 
             {
-                addActiveClass(section); // add active class to active nav when clicked
+                addActiveClass(section); // add active class to active section when scrolled
+                addActiveClass(targetMenu); // add active class to active nav when scrolled
             } else {
                 section.classList.remove("active");
+                targetMenu.classList.remove("active");
             }
 
             mainNavContainer.style.display = "block";
@@ -131,5 +128,72 @@ scrollToAnchor(...sections);
 
 
 // Set sections as active
+
+
+// Mobile Navigation
+
+const mobileMenu = document.querySelector("#menuicon");
+
+mobileMenu.addEventListener("click", mobileMenuClick);
+const navBar = document.querySelector("#navbar__list");
+const body = document.querySelector("body");
+
+function mobileMenuClick() {
+    navBar.style.display = "block";
+    navBar.classList.toggle("mobile-show");
+    body.classList.toggle("open");
+}
+
+
+// When clicking menu on mobile devices, hide the full screen mobile nav view.
+const menuLinks = document.querySelectorAll(".menu__link");
+function mobleMenuClick(...menuLinks) {
+    let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    if (viewportWidth < 740) {
+        let i = 0;
+        for ( let menuLink of menuLinks ) {
+        menuLink.addEventListener("click", onClickChangeClasses);
+        }
+    }
+}
+
+// When resizing window, hide the full screen mobile nav view when clicking the menu.
+window.addEventListener('resize', function () {
+    let viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+		mobleMenuClick(...menuLinks);
+}, false);
+
+mobleMenuClick(...menuLinks);
+
+// Callback function of mobile menu clicks.
+function onClickChangeClasses() {
+    navBar.style.display = "none";
+    navBar.classList.remove("mobile-show");
+    body.classList.remove("open");
+    this.classList.add("active");
+}
+
+// Add a scroll to top button on the page that’s only visible when the user scrolls below the fold of the page.
+
+document.addEventListener("scroll", addButtonOnScroll, false);
+document.addEventListener("swheel", addButtonOnScroll, false);
+
+function addButtonOnScroll() {
+    const scrollTopButton = document.querySelector(".scroll-top");
+    let scrollToTop ='<a href="#top" class="scroll-top">Scroll To Top</a>';
+
+    let scrollPos = window.scrollY;  // the number of pixels the document is currently scrolled along the vertical axis. How much scrolled from the top of document.
+
+
+    if ( scrollPos > 500 ) {
+        
+        scrollTopButton.classList.remove("hide");
+    } else {
+        scrollTopButton.classList.remove("hide");
+        scrollTopButton.classList.add("hide");
+    }
+}
+
+
 
 
